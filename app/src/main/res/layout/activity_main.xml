@@ -192,7 +192,7 @@
         <ImageView
             android:id="@+id/img_8"
             android:layout_width="64dp"
-            android:layout_height="80dp"
+            android:layout_height="64dp"
             android:background="@drawable/ic_five"
             app:layout_constraintStart_toStartOf="@id/img_7"
             app:layout_constraintTop_toBottomOf="@id/img_7" />
@@ -200,7 +200,7 @@
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/step_5"
             android:layout_width="64dp"
-            android:layout_height="80dp"
+            android:layout_height="64dp"
             android:background="@drawable/ic_five"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="@id/img_7"
@@ -229,7 +229,7 @@
         <ImageView
             android:id="@+id/img_11"
             android:layout_width="64dp"
-            android:layout_height="80dp"
+            android:layout_height="64dp"
             android:background="@drawable/ic_four"
             app:layout_constraintStart_toStartOf="@id/img_10"
             app:layout_constraintTop_toBottomOf="@id/img_10" />
@@ -325,7 +325,7 @@
         <ImageView
             android:id="@+id/img_20"
             android:layout_width="64dp"
-            android:layout_height="80dp"
+            android:layout_height="64dp"
             android:background="@drawable/ic_two"
             app:layout_constraintStart_toStartOf="@id/img_19"
             app:layout_constraintTop_toBottomOf="@id/img_19" />
@@ -333,7 +333,7 @@
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/step_2"
             android:layout_width="64dp"
-            android:layout_height="80dp"
+            android:layout_height="64dp"
             android:background="@drawable/ic_two"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="@id/img_19"
@@ -361,7 +361,7 @@
         <ImageView
             android:id="@+id/img_23"
             android:layout_width="64dp"
-            android:layout_height="80dp"
+            android:layout_height="64dp"
             android:background="@drawable/ic_one"
             app:layout_constraintStart_toStartOf="@id/img_22"
             app:layout_constraintTop_toBottomOf="@id/img_22" />
@@ -369,7 +369,7 @@
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/step_1"
             android:layout_width="64dp"
-            android:layout_height="80dp"
+            android:layout_height="64dp"
             android:background="@drawable/ic_one"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="@id/img_22"

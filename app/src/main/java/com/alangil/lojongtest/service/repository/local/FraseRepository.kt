@@ -34,7 +34,6 @@ class FraseRepository(context: Context) {
             if (response.code() > 0) {
                 response.body()
                 response.body()?.let { mDataBase.save(it) }
-                Toast.makeText(context, "API OK", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -54,7 +53,6 @@ class FraseRepository(context: Context) {
             if (response.code() > 0) {
                 response.body()
                 response.body()?.let { mDataBase.update(it) }
-                Toast.makeText(context, "API OK", Toast.LENGTH_SHORT).show()
             }
         }
 

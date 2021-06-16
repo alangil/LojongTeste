@@ -73,9 +73,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
          */
 
         val calendar: Calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY))
+        calendar.set(Calendar.HOUR_OF_DAY, 4)
         calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 1)
+        calendar.set(Calendar.SECOND, 0)
 
         val tarefaIntent = Intent(this, RequisitarAPI::class.java)
         val tarefaPendingIntent = PendingIntent.getBroadcast(this, 1234, tarefaIntent, 0)

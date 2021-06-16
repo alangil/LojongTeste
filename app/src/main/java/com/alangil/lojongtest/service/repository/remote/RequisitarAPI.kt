@@ -21,7 +21,7 @@ class RequisitarAPI() : BroadcastReceiver() {
         val mFraseRepository: FraseRepository = FraseRepository(mContext)
         if (mFraseRepository.getAll() == null) mFraseRepository.response
         else mFraseRepository.responseUp
-
+        Toast.makeText(context, "API OK", Toast.LENGTH_SHORT).show()
 
     }
 }
