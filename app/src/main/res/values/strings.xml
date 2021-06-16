@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LojongTest</string>
+    <string name="erro_carregar_api">Erro ao carregar frases da API! Verifique sua conexão ou status do site: https://cat-fact.herokuapp.com/facts</string>
+</resources>
