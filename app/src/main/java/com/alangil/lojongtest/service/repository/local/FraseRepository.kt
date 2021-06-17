@@ -19,44 +19,53 @@ class FraseRepository(context: Context) {
      * Utilizar Retrofit
      */
 
-    // Chamada para salvar dados da API -> BD
-    private val remote = RetrofitClient.createService(FactsService::class.java)
-    val call: Call<List<FraseModel>> = remote.list()
-    val response = call.enqueue(object : Callback<List<FraseModel>> {
-        override fun onFailure(call: Call<List<FraseModel>>, t: Throwable) {
-            Toast.makeText(context, "Erro ao carregar API", Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onResponse(
-            call: Call<List<FraseModel>>,
-            response: Response<List<FraseModel>>
-        ) {
-            if (response.code() > 0) {
-                response.body()
-                response.body()?.let { mDataBase.save(it) }
+    fun popularBD(){
+        // Chamada para salvar dados da API -> BD
+        val remote = RetrofitClient.createService(FactsService::class.java)
+        val call: Call<List<FraseModel>> = remote.list()
+        val response = call.enqueue(object : Callback<List<FraseModel>> {
+            override fun onFailure(call: Call<List<FraseModel>>, t: Throwable) {
+                Toast.makeText(context, "Erro ao carregar API", Toast.LENGTH_SHORT).show()
             }
-        }
 
-    })
+            override fun onResponse(
+                call: Call<List<FraseModel>>,
+                response: Response<List<FraseModel>>
+            ) {
+                if (response.code() > 0) {
+                    response.body()
+                    response.body()?.let { mDataBase.save(it) }
+                }
+            }
+
+        })
+
+    }
+
+    fun rePopularBD(){
+        val remote = RetrofitClient.createService(FactsService::class.java)
+        val call2: Call<List<FraseModel>> = remote.list()
+        val responseUp = call2.enqueue(object : Callback<List<FraseModel>> {
+            override fun onFailure(call: Call<List<FraseModel>>, t: Throwable) {
+                Toast.makeText(context, "Erro ao carregar API", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(
+                call: Call<List<FraseModel>>,
+                response: Response<List<FraseModel>>
+            ) {
+                if (response.code() > 0) {
+                    response.body()
+                    response.body()?.let { mDataBase.update(it) }
+                }
+                Toast.makeText(context, "API OK", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+    }
 
     // Chamada para atualizar dados da API -> BD
-    val call2: Call<List<FraseModel>> = remote.list()
-    val responseUp = call2.enqueue(object : Callback<List<FraseModel>> {
-        override fun onFailure(call: Call<List<FraseModel>>, t: Throwable) {
-            Toast.makeText(context, "Erro ao carregar API", Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onResponse(
-            call: Call<List<FraseModel>>,
-            response: Response<List<FraseModel>>
-        ) {
-            if (response.code() > 0) {
-                response.body()
-                response.body()?.let { mDataBase.update(it) }
-            }
-        }
-
-    })
 
 
     /**

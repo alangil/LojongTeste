@@ -17,6 +17,7 @@
             android:exported="true"></receiver>
 
         <activity android:name=".view.MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

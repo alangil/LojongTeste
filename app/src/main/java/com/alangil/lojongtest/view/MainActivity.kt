@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.View
 import android.widget.ScrollView
 import androidx.appcompat.app.AlertDialog
@@ -13,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
 import com.alangil.lojongtest.R
+import com.alangil.lojongtest.service.model.StateModel
+import com.alangil.lojongtest.service.repository.local.FraseRepository
 import com.alangil.lojongtest.service.repository.remote.RequisitarAPI
 import com.alangil.lojongtest.viewmodel.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -27,10 +28,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * Definir lateinit viewModel
      */
     private lateinit var mViewModel: MainActivityViewModel
+    private var fraseId = 0
 
-    /**
-     * Coroutine para delay ao mover elefante
-     */
     // Verificador de status
     var step1IsChecked: Boolean = false
     var step2IsChecked: Boolean = false
@@ -48,19 +47,115 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }
-        /**
-         * Iniciar scroll no fim da tela
-         */
-        scroll_view.post(Runnable { scroll_view.fullScroll(ScrollView.FOCUS_DOWN) })
 
         /**
          * Definir a classe para ser escutada pela ViewModel
          */
         mViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
-        carregarApi()
+        var stateVerify = mViewModel.verificaStates()
+        var stateBDVerify = mViewModel.verificaStateBD()
+
         setListeners()
         observer()
+
+        if (stateBDVerify == 0) {
+            carregarApi()
+
+        }
+
+        /**
+         * Verifica ultimo state do usuário
+         */
+
+        if (stateVerify == 0) {
+            val state1 = StateModel().apply {
+                this.state = true
+            }
+            step_1.visibility = View.VISIBLE
+            scroll_view.post(Runnable { scroll_view.fullScroll(ScrollView.FOCUS_DOWN) })
+            mViewModel.saveState(state1)
+
+            val state2 = StateModel().apply {
+                this.state = false
+            }
+            mViewModel.saveState(state2)
+            val state3 = StateModel().apply {
+                this.state = false
+            }
+            mViewModel.saveState(state3)
+
+            val state4 = StateModel().apply {
+                this.state = false
+            }
+            mViewModel.saveState(state4)
+
+            val state5 = StateModel().apply {
+                this.state = false
+            }
+            mViewModel.saveState(state5)
+        } else if (stateVerify == 1) {
+            val state1 = StateModel().apply {
+                this.state = true
+            }
+            step_1.visibility = View.VISIBLE
+            scroll_view.post(Runnable { scroll_view.fullScroll(ScrollView.FOCUS_DOWN) })
+            mViewModel.saveState(state1)
+        } else if (stateVerify == 2) {
+            val state2 = StateModel().apply {
+                this.state = true
+            }
+            step_2.visibility = View.VISIBLE
+            mViewModel.saveState(state2)
+            scroll_view.post(Runnable { scroll_view.fullScroll(ScrollView.FOCUS_DOWN) })
+        } else if (stateVerify == 3) {
+            val state3 = StateModel().apply {
+                this.state = true
+            }
+            step_3.visibility = View.VISIBLE
+            scroll_view.post(Runnable { scroll_view.fullScroll(ScrollView.FOCUS_DOWN) })
+            mViewModel.saveState(state3)
+        } else if (stateVerify == 4) {
+            val state4 = StateModel().apply {
+                this.state = true
+            }
+            step_4.visibility = View.VISIBLE
+            scroll_view.post(Runnable { scroll_view.fullScroll(ScrollView.FOCUS_UP) })
+            mViewModel.saveState(state4)
+        } else if (stateVerify == 5) {
+            val state5 = StateModel().apply {
+                this.state = true
+            }
+            step_5.visibility = View.VISIBLE
+            scroll_view.post(Runnable { scroll_view.fullScroll(ScrollView.FOCUS_UP) })
+            mViewModel.saveState(state5)
+
+        }
+
+    }
+
+    /**
+     * Observer para atualização dos dados dos Steps
+     */
+
+    private fun observer() {
+
+        val view = View.inflate(this, R.layout.dialog_view, null)
+        val builder = AlertDialog.Builder(this)
+        builder.setView(view)
+        val dialog = builder.create()
+        mViewModel.loadFrase.observe(this, {
+            if (it != null) {
+                view.text_frase.text = it.text
+                dialog.show()
+                dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                view.btn_confirmar.setOnClickListener {
+                    dialog.dismiss()
+                }
+            }
+
+        })
+
 
     }
 
@@ -70,8 +165,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
          * Função de carregar API
          * criada utilizando BroadCast e AlarmManager
          * para que ocorra a cada 24 horas
+         * e faça a primeira população do BD de frases
          */
-
+        val mFraseRepository = FraseRepository(this)
+        mFraseRepository.popularBD()
         val calendar: Calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, 4)
         calendar.set(Calendar.MINUTE, 0)
@@ -85,30 +182,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
             AlarmManager.INTERVAL_DAY, tarefaPendingIntent
         )
-    }
-
-    /**
-     * Observer para atualização dos dados dos Steps
-     */
-
-    private fun observer() {
-
-        val view = View.inflate(this, R.layout.dialog_view, null)
-        val builder = AlertDialog.Builder(this)
-        builder.setView(view)
-        val dialog = builder.create()
-
-
-        mViewModel.loadFrase.observe(this, {
-            if (it != null) {
-                view.text_frase.text = it.text
-            }
-            dialog.show()
-            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-            view.btn_confirmar.setOnClickListener {
-                dialog.dismiss()
-            }
-        })
     }
 
     /**
@@ -134,7 +207,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
         val id = v.id
-        var fraseId = 0
 
 
         // Atividade Step 1
@@ -145,14 +217,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             step_1.visibility = View.VISIBLE
             step_2.visibility = View.INVISIBLE
             step2IsChecked = false
+            mViewModel.updateState(2, step2IsChecked)
             step_3.visibility = View.INVISIBLE
             step3IsChecked = false
+            mViewModel.updateState(3, step3IsChecked)
             step_4.visibility = View.INVISIBLE
             step4IsChecked = false
+            mViewModel.updateState(4, step4IsChecked)
             step_5.visibility = View.INVISIBLE
             step5IsChecked = false
+            mViewModel.updateState(5, step5IsChecked)
             step_1.playAnimation()
             step1IsChecked = true
+            mViewModel.updateState(1, step1IsChecked)
 
 
             fraseId = 1
@@ -167,14 +244,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             step_2.visibility = View.VISIBLE
             step_1.visibility = View.INVISIBLE
             step1IsChecked = false
+            mViewModel.updateState(1, step1IsChecked)
             step_3.visibility = View.INVISIBLE
             step3IsChecked = false
+            mViewModel.updateState(3, step3IsChecked)
             step_4.visibility = View.INVISIBLE
             step4IsChecked = false
+            mViewModel.updateState(4, step4IsChecked)
             step_5.visibility = View.INVISIBLE
             step5IsChecked = false
+            mViewModel.updateState(5, step5IsChecked)
             step_2.playAnimation()
             step2IsChecked = true
+            mViewModel.updateState(2, step2IsChecked)
 
             fraseId = 2
         }
@@ -188,14 +270,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             step_3.visibility = View.VISIBLE
             step_1.visibility = View.INVISIBLE
             step1IsChecked = false
+            mViewModel.updateState(1, step1IsChecked)
             step_2.visibility = View.INVISIBLE
             step2IsChecked = false
+            mViewModel.updateState(2, step2IsChecked)
             step_4.visibility = View.INVISIBLE
             step4IsChecked = false
+            mViewModel.updateState(4, step4IsChecked)
             step_5.visibility = View.INVISIBLE
             step5IsChecked = false
+            mViewModel.updateState(5, step5IsChecked)
             step_3.playAnimation()
             step3IsChecked = true
+            mViewModel.updateState(3, step3IsChecked)
 
             fraseId = 3
         }
@@ -208,14 +295,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             step_4.visibility = View.VISIBLE
             step_1.visibility = View.INVISIBLE
             step1IsChecked = false
+            mViewModel.updateState(1, step1IsChecked)
             step_2.visibility = View.INVISIBLE
             step2IsChecked = false
+            mViewModel.updateState(2, step2IsChecked)
             step_3.visibility = View.INVISIBLE
             step3IsChecked = false
+            mViewModel.updateState(3, step3IsChecked)
             step_5.visibility = View.INVISIBLE
             step5IsChecked = false
+            mViewModel.updateState(5, step5IsChecked)
             step_4.playAnimation()
             step4IsChecked = true
+            mViewModel.updateState(4, step4IsChecked)
 
             fraseId = 4
         }
@@ -227,14 +319,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             step_5.visibility = View.VISIBLE
             step_1.visibility = View.INVISIBLE
             step1IsChecked = false
+            mViewModel.updateState(1, step1IsChecked)
             step_2.visibility = View.INVISIBLE
             step2IsChecked = false
+            mViewModel.updateState(2, step2IsChecked)
             step_3.visibility = View.INVISIBLE
             step3IsChecked = false
+            mViewModel.updateState(3, step3IsChecked)
             step_4.visibility = View.INVISIBLE
             step4IsChecked = false
+            mViewModel.updateState(4, step4IsChecked)
             step_5.playAnimation()
             step5IsChecked = true
+            mViewModel.updateState(5, step5IsChecked)
 
             fraseId = 5
         }
@@ -243,8 +340,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         mViewModel.load(fraseId)
 
     }
-
-
-
 }
 
